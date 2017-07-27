@@ -1,17 +1,19 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <context:property-placeholder location="classpath*:properties/db.properties"/>
 
+
     <!-- 配置 数据源 -->
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
-        <property name="driverClassName" value="${jdbc.driver}" />
-        <property name="url" value="${jdbc.url}" />
-        <property name="username" value="${jdbc.username}" />
-        <property name="password" value="${jdbc.password}" />
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
     </bean>
 
     <!-- 配置sessionFactory -->
@@ -19,7 +21,34 @@
         <!-- 依赖dataSource -->
         <property name="dataSource" ref="dataSource"/>
         <!-- 创建工厂需要加载hibernate映射文件 -->
-        <property name="configLocations" value="classpath:hibernate/hibernate.cfg.xml"/>
+        <property name="configLocations" value="classpath*:hibernate/hibernate.cfg.xml"/>
+    </bean>
+
+    <!-- 下面使用aop切面的方式来实现 -->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <!--配置事务传播性，隔离级别以及超时回滚等问题 -->
+        <tx:attributes>
+            <tx:method name="save*" propagation="REQUIRED" read-only="false" />
+            <tx:method name="del*" propagation="REQUIRED" />
+            <tx:method name="update*" propagation="REQUIRED" />
+            <tx:method name="add*" propagation="REQUIRED" />
+            <tx:method name="*" rollback-for="Exception" />
+        </tx:attributes>
+    </tx:advice>
+    <aop:config>
+        <!--配置事务切点 -->
+        <aop:pointcut id="dao"
+                      expression="execution(* com.yyyu.ssh.dao.*.*(..))" />
+        <aop:advisor pointcut-ref="dao" advice-ref="txAdvice" />
+    </aop:config>
+
+    <!--基础Dao-->
+    <bean id="sysUserDao" class="com.yyyu.ssh.dao.impl.SysUserDaoImpl">
+        <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
 

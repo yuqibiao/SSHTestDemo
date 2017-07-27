@@ -54,29 +54,8 @@ public class SysUser {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SysUser sysUser = (SysUser) o;
-
-        if (userId != sysUser.userId) return false;
-        if (userCode != null ? !userCode.equals(sysUser.userCode) : sysUser.userCode != null) return false;
-        if (userName != null ? !userName.equals(sysUser.userName) : sysUser.userName != null) return false;
-        if (userPassword != null ? !userPassword.equals(sysUser.userPassword) : sysUser.userPassword != null)
-            return false;
-        if (userState != null ? !userState.equals(sysUser.userState) : sysUser.userState != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) (userId ^ (userId >>> 32));
-        result = 31 * result + (userCode != null ? userCode.hashCode() : 0);
-        result = 31 * result + (userName != null ? userName.hashCode() : 0);
-        result = 31 * result + (userPassword != null ? userPassword.hashCode() : 0);
-        result = 31 * result + (userState != null ? userState.hashCode() : 0);
-        return result;
+    public String toString() {
+        return "userId="+userId+"  userCode="+userCode+"  userName="+userName
+                +"  userPassword="+userPassword+"  userState="+userState;
     }
 }
