@@ -1,12 +1,14 @@
 package com.yyyu.ssh.pojo;
 
+import java.io.Serializable;
+
 /**
  * 功能：
  *
  * @author yu
  * @date 2017/7/24.
  */
-public class SysUser {
+public class SysUser implements Serializable {
     private long userId;
     private String userCode;
     private String userName;

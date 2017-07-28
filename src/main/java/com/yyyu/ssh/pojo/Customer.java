@@ -1,5 +1,6 @@
 package com.yyyu.ssh.pojo;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
@@ -8,7 +9,7 @@ import java.sql.Timestamp;
  * @author yu
  * @date 2017/7/24.
  */
-public class Customer {
+public class Customer implements Serializable {
     private long custId;
     private String custName;
     private Long custUserId;

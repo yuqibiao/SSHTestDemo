@@ -10,4 +10,6 @@ import com.yyyu.ssh.pojo.SysUser;
  */
 public interface SysUserDao extends  BaseDao<SysUser>{
 
+    SysUser getSysUserByNameAndPwd(String username , String password);
+
 }

@@ -4,12 +4,15 @@ import com.yyyu.ssh.dao.BaseDao;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.transform.Transformers;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
@@ -20,9 +23,13 @@ import java.util.List;
  * @author yu
  * @date 2017/7/27.
  */
-public class BaseDaoImpl<T> extends HibernateDaoSupport implements BaseDao<T>{
+
+public class BaseDaoImpl<T> extends HibernateDaoSupport implements BaseDao<T> {
 
     private Class clazz;//用于接收运行期泛型类型
+
+    private DetachedCriteria criteria;
+
 
     public BaseDaoImpl() {
         //获得当前类型的带有泛型类型的父类
@@ -30,6 +37,12 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements BaseDao<T>{
         //获得运行期的泛型类型
         clazz = (Class) ptClass.getActualTypeArguments()[0];
     }
+
+    @Resource
+    public void setSessionFactory0(SessionFactory sessionFactory){
+        super.setSessionFactory(sessionFactory);
+    }
+
 
     @Override
     public void saveOrUpdate(T t) {
@@ -49,9 +62,9 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements BaseDao<T>{
     @Override
     public void delete(Serializable id) {
         T t = getById(id);
-        if(t==null){
-            throw  new UnsupportedOperationException("不存在该id的数据，无法删除");
-        }else{
+        if (t == null) {
+            throw new UnsupportedOperationException("不存在该id的数据，无法删除");
+        } else {
             getHibernateTemplate().delete(t);
         }
     }
@@ -63,7 +76,7 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements BaseDao<T>{
 
     @Override
     public T getById(Serializable id) {
-        return (T)getHibernateTemplate().get(clazz , id);
+        return (T) getHibernateTemplate().get(clazz, id);
     }
 
     @Override
@@ -73,10 +86,10 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements BaseDao<T>{
         List<Long> list = (List<Long>) getHibernateTemplate().findByCriteria(dc);
         //清空之前设置的聚合函数
         dc.setProjection(null);
-        if(list!=null && list.size()>0){
+        if (list != null && list.size() > 0) {
             Long count = list.get(0);
             return count.intValue();
-        }else{
+        } else {
             return null;
         }
     }
@@ -93,9 +106,9 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements BaseDao<T>{
             @Override
             public List<E> doInHibernate(Session session) throws HibernateException {
                 Query query = session.createQuery(hql);
-                if(values!=null){
-                    for (int i=0;i<values.length ; i++){
-                        query.setParameter(i , values[i]);
+                if (values != null) {
+                    for (int i = 0; i < values.length; i++) {
+                        query.setParameter(i, values[i]);
                     }
                 }
                 query.setFirstResult(start);
@@ -108,14 +121,14 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements BaseDao<T>{
 
 
     @Override
-    public <E>List<E> getPageListBySql(String sql, Object[] values, Integer start, Integer pageSize) {
+    public <E> List<E> getPageListBySql(String sql, Object[] values, Integer start, Integer pageSize) {
         List<E> result = getHibernateTemplate().execute(new HibernateCallback<List<E>>() {
             @Override
             public List<E> doInHibernate(Session session) throws HibernateException {
                 Query query = session.createSQLQuery(sql);
-                if(values!=null){
-                    for (int i=0;i<values.length ; i++){
-                        query.setParameter(i , values[i]);
+                if (values != null) {
+                    for (int i = 0; i < values.length; i++) {
+                        query.setParameter(i, values[i]);
                     }
                 }
                 query.setMaxResults(pageSize);
@@ -124,6 +137,14 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements BaseDao<T>{
             }
         });
         return result;
+    }
+
+    public void evict(T t){
+        getHibernateTemplate().evict(t);
+    }
+
+    public DetachedCriteria getCriteria() {
+        return DetachedCriteria.forClass(clazz);
     }
 
 }

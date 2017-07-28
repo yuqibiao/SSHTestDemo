@@ -1,10 +1,7 @@
 package com.yyyu.test;
 
-import com.yyyu.ssh.dao.BaseDao;
 import com.yyyu.ssh.dao.SysUserDao;
-import com.yyyu.ssh.dao.impl.SysUserDaoImpl;
 import com.yyyu.ssh.pojo.SysUser;
-import com.yyyu.test.bean.QueryVo;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

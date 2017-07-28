@@ -1,12 +1,14 @@
 package com.yyyu.ssh.pojo;
 
+import java.io.Serializable;
+
 /**
  * 功能：
  *
  * @author yu
  * @date 2017/7/24.
  */
-public class BaseDict {
+public class BaseDict implements Serializable{
     private String dictId;
     private String dictTypeCode;
     private String dictTypeName;

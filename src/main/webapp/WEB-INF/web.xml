@@ -4,6 +4,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
+    <welcome-file-list>
+        <welcome-file>/WEB-INF/view/login.jsp</welcome-file>
+    </welcome-file-list>
+    
     <!-- 配置spring -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
@@ -55,7 +59,7 @@
         <!--指定struts.xml路径-->
         <init-param>
             <param-name>config</param-name>
-            <param-value>classpath*:struts/struts.xml</param-value>
+            <param-value>struts-default.xml,struts-plugin.xml,resources/struts.xml ,classpath*:struts/struts.xml</param-value>
         </init-param>
     </filter>
 

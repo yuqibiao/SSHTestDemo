@@ -2,6 +2,7 @@ package com.yyyu.ssh.dao;
 
 import org.hibernate.criterion.DetachedCriteria;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.List;
 
@@ -28,7 +29,6 @@ public interface BaseDao<T> {
     void update(T t);
     //查 根据id查询
     T	getById(Serializable id);
-    //通过Hql语句查询
     //查 符合条件的总记录数
     Integer	getTotalCount(DetachedCriteria dc);
     //查 查询分页列表数据
@@ -37,5 +37,8 @@ public interface BaseDao<T> {
     <E> List<E>getPageListByHql(String hql , Object[] values , Integer start , Integer pageSize);
     //查 查询分页列表数据(sql)
     <E>List<E>getPageListBySql(String sql , Object[] values , Integer start , Integer pageSize);
-
+    //使对象变为游离态
+    void evict(T t);
+    //得到DetachedCriteria
+    DetachedCriteria getCriteria();
 }
