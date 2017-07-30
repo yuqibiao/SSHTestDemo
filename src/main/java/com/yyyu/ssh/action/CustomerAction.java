@@ -1,6 +1,8 @@
 package com.yyyu.ssh.action;
 
+import com.google.gson.Gson;
 import com.yyyu.ssh.bean.CustomerQueryVo;
+import com.yyyu.ssh.bean.ResultMessage;
 import com.yyyu.ssh.biz.BaseDictBiz;
 import com.yyyu.ssh.biz.CustomerBiz;
 import com.yyyu.ssh.pojo.BaseDict;
@@ -39,6 +41,50 @@ public class CustomerAction extends BaseAction{
     @Autowired
     private CustomerBiz customerBiz;
 
+    Customer customer;
+
+
+    /**
+     * 修改customer
+     */
+    @Action( value = "modifyCustomer")
+    public void modifyCustomer(){
+        customerBiz.modifyCustomerByCustId(customer);
+        ResultMessage<Customer> message = new ResultMessage<>();
+        message.setRESULT_CODE(100);
+        message.setRESULT_DATA(customer);
+        getWriter().print(new Gson().toJson(message));
+    }
+
+    @Action(value = "getCustomerByCustId")
+    public void getCustomerByCustId(){
+        String custIdStr = getRequestParm().getParameter("custId");
+        long custId =Long.parseLong( custIdStr);
+        Customer customer = customerBiz.getCustomerByCustId(custId);
+        ResultMessage<Customer> message = new ResultMessage<>();
+        message.setRESULT_CODE(200);
+        message.setRESULT_DATA(customer);
+        getWriter().print(new Gson().toJson(message));
+    }
+
+    /**
+     * 根据id删除customer
+     */
+    @Action( value = "deleteCustomer")
+    public void deleteCustomerByCustId(){
+        String custIdStr = getRequestParm().getParameter("custId");
+        long custId =Long.parseLong( custIdStr);
+        customerBiz.deleteCustomerByCustId(custId);
+        ResultMessage<String> message = new ResultMessage<>();
+        message.setRESULT_CODE(200);
+        message.setRESULT_DATA("删除成功");
+        getWriter().print(new Gson().toJson(message));
+    }
+
+    /**
+     * 查询customer数据集合
+     * @return
+     */
     @Action(value = "list",results = {
             @Result (name = SUCCESS  ,location = "/WEB-INF/view/customer.jsp"),
             @Result(name = ERROR , location = "/WEB-INF/view/login.jsp")
@@ -58,16 +104,23 @@ public class CustomerAction extends BaseAction{
         queryVo.setCustSource(custSource);
         queryVo.setCustIndustry(custIndustry);
         queryVo.setCustLevel(custLevel);
-        logger.error("======================="+queryVo);
         List<BaseDict> fromType = baseDictBiz.getBaseDictListByCode(fromTypeCode);
         List<BaseDict> industryType = baseDictBiz.getBaseDictListByCode(industryTypeCode);
         List<BaseDict> levelType = baseDictBiz.getBaseDictListByCode(levelTypeCode);
         Page<Customer> page = customerBiz.getPageByQueryVo(queryVo);
-        getSession().put("fromType" , fromType);
-        getSession().put("industryType" , industryType);
-        getSession().put("levelType" , levelType);
-        getSession().put("page" , page);
+        getRequest().put("fromType" , fromType);
+        getRequest().put("industryType" , industryType);
+        getRequest().put("levelType" , levelType);
+        getRequest().put("page" , page);
         return SUCCESS;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
 }

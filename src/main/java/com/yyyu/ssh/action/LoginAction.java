@@ -25,7 +25,7 @@ public class LoginAction extends BaseAction{
     private SysUserBiz sysUserBiz;
 
     @Action(value ="checkUser" , results = {
-            @Result (name = SUCCESS  ,location = "/customer/list"),
+            @Result (name = SUCCESS  ,location = "/customer/list" ,type="redirect"),
             @Result(name = ERROR , location = "/WEB-INF/view/login.jsp")
     })
     public  String checkUser( ){

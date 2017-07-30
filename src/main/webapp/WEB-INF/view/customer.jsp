@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="page" uri="http://com.yyyu.ssm/page/" %>
+<%@ taglib prefix="page" uri="http://com.yyyu.ssh/page/" %>
 <%--
   功能:客户展示页面
   User: yu
@@ -319,18 +319,18 @@
             </div>
             <div class="modal-body">
                 <form class="form-horizontal" id="edit_customer_form">
-                    <input type="hidden" id="edit_cust_id" name="custId"/>
+                    <input type="hidden" id="edit_cust_id" name="customer.custId"/>
                     <div class="form-group">
                         <label for="edit_customerName" class="col-sm-2 control-label">客户名称</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="edit_customerName" placeholder="客户名称"
-                                   name="custName">
+                                   name="customer.custName">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="edit_customerFrom" style="float:left;padding:7px 15px 0 27px;">客户来源</label>
                         <div class="col-sm-10">
-                            <select class="form-control" id="edit_customerFrom" placeholder="客户来源" name="custSource">
+                            <select class="form-control" id="edit_customerFrom" placeholder="客户来源" name="customer.custSource">
                                 <option value="">--请选择--</option>
                                 <c:forEach items="${fromType}" var="item">
                                     <option value="${item.dictId}"<c:if
@@ -342,7 +342,7 @@
                     <div class="form-group">
                         <label for="edit_custIndustry" style="float:left;padding:7px 15px 0 27px;">所属行业</label>
                         <div class="col-sm-10">
-                            <select class="form-control" id="edit_custIndustry" name="custIndustry">
+                            <select class="form-control" id="edit_custIndustry" name="customer.custIndustry">
                                 <option value="">--请选择--</option>
                                 <c:forEach items="${industryType}" var="item">
                                     <option value="${item.dictId}"<c:if
@@ -354,7 +354,7 @@
                     <div class="form-group">
                         <label for="edit_custLevel" style="float:left;padding:7px 15px 0 27px;">客户级别</label>
                         <div class="col-sm-10">
-                            <select class="form-control" id="edit_custLevel" name="custLevel">
+                            <select class="form-control" id="edit_custLevel" name="customer.custLevel">
                                 <option value="">--请选择--</option>
                                 <c:forEach items="${levelType}" var="item">
                                     <option value="${item.dictId}"<c:if
@@ -367,35 +367,35 @@
                         <label for="edit_linkMan" class="col-sm-2 control-label">联系人</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="edit_linkMan" placeholder="联系人"
-                                   name="custLinkman">
+                                   name="customer.custLinkman">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="edit_phone" class="col-sm-2 control-label">固定电话</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="edit_phone" placeholder="固定电话"
-                                   name="custPhone">
+                                   name="customer.custPhone">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="edit_mobile" class="col-sm-2 control-label">移动电话</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="edit_mobile" placeholder="移动电话"
-                                   name="custMobile">
+                                   name="customer.custMobile">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="edit_zipcode" class="col-sm-2 control-label">邮政编码</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="edit_zipcode" placeholder="邮政编码"
-                                   name="custZipcode">
+                                   name="customer.custZipcode">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="edit_address" class="col-sm-2 control-label">联系地址</label>
                         <div class="col-sm-10">
                             <input type="text" class="form-control" id="edit_address" placeholder="联系地址"
-                                   name="custAddress">
+                                   name="customer.custAddress">
                         </div>
                     </div>
                 </form>
@@ -424,9 +424,11 @@
     function editCustomer(custId) {
         $.ajax({
             type: "get",
-            url: "<%=basePath%>/customer/getCustomerByCustId.action",
+            url: "<%=basePath%>/customer/getCustomerByCustId",
             data: {"custId": custId},
-            success: function (data) {
+            success: function (message) {
+                var obj = $.parseJSON(message);
+                var data = obj.RESULT_DATA;
                 $("#edit_cust_id").val(data.custId);
                 $("#edit_customerName").val(data.custName);
                 $("#edit_customerFrom").val(data.custSource)
@@ -442,7 +444,7 @@
         });
     }
     function updateCustomer() {
-        $.post("<%=basePath%>customer/modifyCustomer.action", $("#edit_customer_form").serialize(), function (data) {
+        $.post("<%=basePath%>customer/modifyCustomer", $("#edit_customer_form").serialize(), function (data) {
             alert("客户信息更新成功！");
             window.location.reload();
         });
@@ -450,7 +452,7 @@
 
     function deleteCustomer(custId) {
         if (confirm('确实要删除该客户吗?')) {
-            $.post("<%=basePath%>customer/deleteCustomer.action", {"custId": custId}, function (data) {
+            $.post("<%=basePath%>customer/deleteCustomer", {"custId": custId}, function (data) {
                 alert("客户删除更新成功！");
                 window.location.reload();
             });

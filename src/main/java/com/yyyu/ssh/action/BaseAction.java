@@ -6,9 +6,11 @@ import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ParameterAware;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
@@ -70,6 +72,16 @@ public class BaseAction extends ActionSupport implements ParameterAware {
         response.setContentType("text/html;charset=UTF-8");
         response.setCharacterEncoding("UTF-8");
         return response;
+    }
+
+    public PrintWriter getWriter(){
+        PrintWriter writer=null;
+        try {
+            writer = getResponse().getWriter();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return writer;
     }
 
     /**
