@@ -4,6 +4,7 @@ import com.yyyu.ssh.bean.CustomerQueryVo;
 import com.yyyu.ssh.biz.CustomerBiz;
 import com.yyyu.ssh.dao.CustomerDao;
 import com.yyyu.ssh.pojo.Customer;
+import com.yyyu.ssh.utils.TextUtils;
 import com.yyyu.ssh.utils.page.Page;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * 功能：
@@ -39,16 +41,17 @@ public class CustomerBizImpl  implements CustomerBiz {
         int start = (queryVo.getPage()-1)*queryVo.getSize();
         int pageSize = queryVo.getSize();
         DetachedCriteria criteria = customerDao.getCriteria();
-        if (queryVo.getCustName()!=null){
+        System.out.println("==queryVo=="+queryVo);
+        if (!TextUtils.isEmpty(queryVo.getCustName())){
             criteria.add(Restrictions.eq("custName" , queryVo.getCustName()));
         }
-        if(queryVo.getCustIndustry()!=null){
+        if(!TextUtils.isEmpty(queryVo.getCustIndustry())){
             criteria.add(Restrictions.eq("custIndustry" , queryVo.getCustIndustry()));
         }
-        if(queryVo.getCustLevel()!=null){
+        if(!TextUtils.isEmpty(queryVo.getCustLevel()) ){
             criteria.add(Restrictions.eq("custLevel" , queryVo.getCustLevel()));
         }
-        if(queryVo.getCustSource()!=null){
+        if(!TextUtils.isEmpty(queryVo.getCustSource())){
             criteria.add(Restrictions.eq("custSource" , queryVo.getCustSource()));
         }
         return customerDao.getPageList(criteria  , start , pageSize);
